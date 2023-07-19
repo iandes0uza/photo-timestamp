@@ -1,11 +1,8 @@
 # import all the libraries
-from PIL import Image, ExifTags
-from PIL import ImageFont
-from PIL import ImageDraw
-from PIL.ExifTags import TAGS, Base
-from tkinter import filedialog
-from tkinter import Tk
-import os, itertools
+from PIL import Image, ImageFont, ImageDraw
+from PIL.ExifTags import TAGS
+from tkinter import filedialog, Tk
+import os, shutil
 
 # Watermark object, stores values from parser and returns watermark string
 class wmk:
@@ -31,7 +28,6 @@ def add_watermark(img, text):
     x = width - textwidth - 45
     y = height - textheight - 25
     draw.text((x,y), text, font=font, fill='#FFFF00', stroke_width=1, stroke_fill='#222')
-    img.show()
 
 # This function grabs the timestamp from the image's EXIF data
 def get_timestamp(img_exif):
@@ -53,12 +49,18 @@ def main():
     root.withdraw()
     filepath = filedialog.askdirectory(initialdir='/Users/ian/Documents/GitHub/photo-timestamp')
     files = list(filter(lambda f: f.lower().endswith(('.jpg', '.jpeg', '.png')), os.listdir(filepath)))
+    dest_path = os.path.join(filepath, "Time_Stamped")
+    if os.path.exists(dest_path):
+        shutil.rmtree(dest_path)
+    os.makedirs(dest_path)
     print(files)
-    # Open image 
+    # Open images 
     for imgpath in files:
-        image = Image.open(imgpath)
+        print(imgpath)
+        image = Image.open(filepath+"/"+imgpath)
         watermark = parse_metadata(image)
         add_watermark(image, watermark.format_dateAndTime())
+        image.save(f"{dest_path}/{imgpath}")
 
 if __name__ == "__main__":
     main()
