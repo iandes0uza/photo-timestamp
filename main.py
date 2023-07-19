@@ -5,12 +5,7 @@ from PIL import ImageDraw
 from PIL.ExifTags import TAGS, Base
 from tkinter import filedialog
 from tkinter import Tk
-
-root = Tk()
-root.withdraw()
-
-filename = filedialog.askopenfilename(initialdir='/Users/ian/Documents/GitHub/photo-timestamp')
-# print(filename)
+import os, itertools
 
 # Watermark object, stores values from parser and returns watermark string
 class wmk:
@@ -54,10 +49,16 @@ def parse_metadata(img):
     return wmk(d, m, y, hr, min, sec)
 
 def main():
+    root = Tk()
+    root.withdraw()
+    filepath = filedialog.askdirectory(initialdir='/Users/ian/Documents/GitHub/photo-timestamp')
+    files = list(filter(lambda f: f.lower().endswith(('.jpg', '.jpeg', '.png')), os.listdir(filepath)))
+    print(files)
     # Open image 
-    image = Image.open(filename)
-    watermark = parse_metadata(image)
-    add_watermark(image, watermark.format_dateAndTime())
+    for imgpath in files:
+        image = Image.open(imgpath)
+        watermark = parse_metadata(image)
+        add_watermark(image, watermark.format_dateAndTime())
 
 if __name__ == "__main__":
     main()
