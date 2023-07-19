@@ -31,10 +31,11 @@ class wmk:
 def add_watermark(img, text):
     width, height = img.size
     draw = ImageDraw.Draw(img)
-    font_size = int(width / 20)
-    font = ImageFont.truetype('seven_segment.ttf', font_size)
-    x, y = int(width/3), int(height/3)
-    draw.text((0,0), text, font=font, fill='#FFFF00', stroke_width=1, stroke_fill='#222', anchor='rs')
+    font = ImageFont.truetype('seven_segment.ttf', int(width / 30))
+    textwidth, textheight = draw.textsize(text, font)
+    x = width - textwidth - 45
+    y = height - textheight - 25
+    draw.text((x,y), text, font=font, fill='#FFFF00', stroke_width=1, stroke_fill='#222')
     img.show()
 
 # This function grabs the timestamp from the image's EXIF data
